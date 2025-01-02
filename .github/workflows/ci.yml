@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1'
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+        arch:
+          - x64
+          - x86
+        exclude:
+          - os: macOS-latest
+            arch: x86
+    steps:
+      - uses: actions/checkout@v2 
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - name: Build Julia Package
+        working-directory: ./Template
+        run: julia -e 'using Pkg; Pkg.activate("."); Pkg.build()'
+      - name: Run Tests
+        working-directory: ./Template
+        run: julia -e 'using Pkg; Pkg.activate("."); Pkg.test()'
+      - name: Upload Artifact (Linux x86)
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86'
+        uses: actions/upload-artifact@v4
+        with:
+            name: Template-Linux-x86
+            path: ./Build
+      - name: Upload Artifact (Mac)
+        if: matrix.os == 'macOS-latest' && matrix.arch == 'x64'
+        uses: actions/upload-artifact@v4
+        with:
+            name: Template-Mac
+            path: ./Build
+      - name: Upload Artifact (Windows x64)
+        if: matrix.os == 'windows-latest' && matrix.arch == 'x64' && github.ref_name == 'main'
+        uses: actions/upload-artifact@v4
+        with:
+            name: Template-Windows-x64
+            path: ./Build
+      - name: Upload Artifact (Windows x86)
+        if: matrix.os == 'windows-latest' && matrix.arch == 'x86' && github.ref_name == 'main'
+        uses: actions/upload-artifact@v4
+        with:
+            name: Template-Windows-x86
+            path: ./Build

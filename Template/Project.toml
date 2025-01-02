@@ -1,0 +1,19 @@
+name = "Template"
+uuid = "a03b29c0-19a9-4f1b-b2bd-23e3c81fa609"
+authors = ["Name <example@gmail.com>"]
+version = "0.0.1"
+
+[deps]
+Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+
+[compat]
+Base64 = "1.11.0"
+FileIO = "1.16.6"
+
+[extras]
+PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "PackageCompiler"]
